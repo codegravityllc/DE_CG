@@ -1,0 +1,1 @@
+select * from COMPANY where COMPANY.RATING >= 4.5;
