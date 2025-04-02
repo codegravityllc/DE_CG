@@ -23,6 +23,35 @@ def extract_salary(salary_str):
         return min_salary, max_salary, avg_salary
     return None, None, None
 
+# Function to insert data into PostgreSQL
+def insert_into_db(df):
+    try:
+        conn = psycopg2.connect(
+            dbname= "Cgdb" , user= "postgres", password= "Password", host= "localhost", port= "5432"
+        )
+
+
+        cursor = conn.cursor()
+
+        for _, row in df.iterrows():
+            cursor.execute("""
+                INSERT INTO job_listings (job_title, salary_min, salary_max, salary_avg,
+                                         job_description, rating, company_name, location,
+                                         headquarters, size, founded, type_of_ownership,
+                                         industry, sector, revenue)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, tuple(row))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print("Data successfully inserted into PostgreSQL.")
+
+    except Exception as e:
+        print("Error inserting data:", e)
+
+# Run the ETL process
+insert_into_db(df_cleaned)
 
 
 
